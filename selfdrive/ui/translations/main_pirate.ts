@@ -1229,7 +1229,7 @@
     </message>
     <message>
         <source>Stop Acceleration (Default: %1)</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Stop Acceleration</source>

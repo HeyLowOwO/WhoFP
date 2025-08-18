@@ -1213,7 +1213,7 @@
     </message>
     <message>
         <source>Switch to &lt;b&gt;Experimental Mode&lt;/b&gt; when a slower or stopped vehicle is detected ahead. Can improve braking smoothness and reliability on some vehicles.</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Navigation Data</source>
@@ -3207,7 +3207,7 @@ Want to submit your own animations? Share them in the "custom-themes" channel on
     </message>
     <message>
         <source>Flashing...</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Flashed!</source>

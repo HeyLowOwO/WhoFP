@@ -1557,7 +1557,7 @@
     </message>
     <message>
         <source>How sensitive openpilot is to detecting vehicles ahead. A lower value can help detect vehicles sooner and from farther away, but increases the chance openpilot mistakes other objects for vehicles.</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Maximum Acceleration Rate</source>
@@ -4504,7 +4504,7 @@ Got your own animations to share? Hop on over to the "custom-themes" channel in 
     </message>
     <message>
         <source>openpilot was unable to identify your car. Check integrity of cables and ensure all connections are secure, particularly that the comma power is fully inserted in the OBD-II port of the vehicle. Need help? Join discord.comma.ai.</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>openpilot detected a change in the device's mounting position. Ensure the device is fully seated in the mount and the mount is firmly secured to the windshield.</source>

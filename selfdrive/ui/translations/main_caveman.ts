@@ -2179,7 +2179,7 @@
     </message>
     <message>
         <source>Maps Size</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Remove Maps</source>
@@ -3309,7 +3309,7 @@ You want share own animation? Share in "custom-themes" channel on FrogPilot Disc
     </message>
     <message>
         <source>The car isn’t staying centered in its lane</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>The speed or display info looks wrong</source>

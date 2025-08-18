@@ -2881,7 +2881,7 @@ Developer - Unlocks highly customizable settings for seasoned enthusiasts</sourc
     </message>
     <message>
         <source>Get an alert when the lead vehicle begins to depart from a standstill.</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Loud "Car Detected in Blindspot" Alert</source>

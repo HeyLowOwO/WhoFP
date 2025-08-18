@@ -692,7 +692,7 @@
     </message>
     <message>
         <source>Manage your toggle backups.</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Name your toggle backup</source>
@@ -2163,7 +2163,7 @@
     </message>
     <message>
         <source>Download Completion ETA</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Download Progress</source>

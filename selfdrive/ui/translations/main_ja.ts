@@ -4165,7 +4165,7 @@ Want to submit your own animations? Share them in the "custom-themes" channel on
     </message>
     <message>
         <source>Mapbox Satellite Streets</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Mapbox Traffic Night</source>

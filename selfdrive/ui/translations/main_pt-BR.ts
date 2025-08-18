@@ -3271,7 +3271,7 @@ Quer enviar suas próprias animações? Compartilhe-as no canal "custom-themes" 
     </message>
     <message>
         <source>Your report has been submitted. Thanks for letting us know!</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Reset Toggles to Default</source>
@@ -4205,7 +4205,7 @@ Quer enviar suas próprias animações? Compartilhe-as no canal "custom-themes" 
     </message>
     <message>
         <source> meter</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source> meters</source>

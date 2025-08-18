@@ -4025,7 +4025,7 @@ Kendi animasyonlarınızı göndermek ister misiniz? FrogPilot Discord’daki "c
     </message>
     <message>
         <source>SSD Used</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>None</source>

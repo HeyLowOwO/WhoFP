@@ -827,7 +827,7 @@
     </message>
     <message>
         <source>Screen Timeout (Offroad)</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>How long it takes for the screen to turn off when not driving.</source>
@@ -1961,7 +1961,7 @@
     </message>
     <message>
         <source>Speed where openpilot begins to exit the stopped state. Higher values avoid creeping but may feel sluggish; lower values move sooner but risk creeping.</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Stop Acceleration (Default: %1)</source>

@@ -1861,7 +1861,7 @@
     </message>
     <message>
         <source>Are you sure you want to completely reset your settings for &lt;b&gt;Traffic Mode&lt;/b&gt;?</source>
-        <translation type="gpt-5-generated" />
+        <translation type="gpt-5-generated"></translation>
     </message>
     <message>
         <source>Are you sure you want to completely reset your settings for the &lt;b&gt;Aggressive&lt;/b&gt; personality?</source>
