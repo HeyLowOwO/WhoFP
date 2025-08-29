@@ -32,16 +32,16 @@ from openpilot.frogpilot.controls.lib.neural_network_feedforward import LOW_SPEE
 #LOW_SPEED_Y = [22, 20, 15, 10, 4, 2, 1]
 
 #less twitchy, less curve cutting, noticible twitch highway
-#LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
-#LOW_SPEED_Y = [20, 18, 10, 8, 5, 3, 2, 1] 
+LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
+LOW_SPEED_Y = [20, 18, 10, 8, 5, 3, 2, 1] 
 
 #lower slow speed so it doesn't ampilfy into high speed
 #LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
 #LOW_SPEED_Y = [16, 15, 8, 6, 4, 3, 2, 1]
 
 #lower to combate tiny torque twitch 
-LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
-LOW_SPEED_Y = [14, 12, 7, 5, 3, 2, 1, 1]
+#LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
+#LOW_SPEED_Y = [14, 12, 7, 5, 3, 2, 1, 1]
 
 
 class LatControlTorque(LatControl):
