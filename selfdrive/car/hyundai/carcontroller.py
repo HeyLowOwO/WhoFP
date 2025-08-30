@@ -69,7 +69,7 @@ class CarController(CarControllerBase):
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
     
     # hysteresis for tiny integer torque flipping
-    tiny_int = 2  # torque units; prevents sign flip around 0
+    tiny_int = 3  # torque units; prevents sign flip around 0
     if abs(new_steer) <= tiny_int and abs(self.apply_steer_last) <= tiny_int:
       # hold zero instead of flipping sign
       new_steer = 0
