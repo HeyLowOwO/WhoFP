@@ -37,8 +37,10 @@ LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
 #twitchy mid speed, good turning thou
 #LOW_SPEED_Y = [20, 18, 10, 8, 5, 3, 2, 1]
 
-LOW_SPEED_Y = [18, 16, 10, 8, 3, 2, 1, 1] 
+#still twitchy, but low speed is good, try slightly lower
+#LOW_SPEED_Y = [18, 16, 10, 8, 3, 2, 1, 1] 
 
+LOW_SPEED_Y = [16, 13, 8, 6, 3, 2, 1, 1] 
 #lower slow speed so it doesn't ampilfy into high speed
 #LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
 #LOW_SPEED_Y = [16, 15, 8, 6, 4, 3, 2, 1]
