@@ -43,9 +43,9 @@ def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_steer, 
   if v_ego <= 18: #40mph
     damp_factor = 100
   elif v_ego <= 26: #58mph
-    damp_factor = 150
+    damp_factor = 100
   else:
-    damp_factor = 200
+    damp_factor = 100
     
   values = {
     "LKA_MODE": 2,
