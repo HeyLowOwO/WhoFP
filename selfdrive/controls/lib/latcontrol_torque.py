@@ -21,8 +21,8 @@ from openpilot.frogpilot.controls.lib.neural_network_feedforward import LOW_SPEE
 # move it at all, this is compensated for too.
 
 # STOCK VALUES
-#LOW_SPEED_X = [0, 10, 20, 30]
-#LOW_SPEED_Y = [15, 13, 10, 5]
+LOW_SPEED_X = [0, 10, 20, 30]
+LOW_SPEED_Y = [15, 13, 10, 5]
 
 #LOW_SPEED_X = [0, 5, 10, 20, 30]
 #LOW_SPEED_Y = [22, 15, 13, 10, 5]
@@ -32,7 +32,10 @@ from openpilot.frogpilot.controls.lib.neural_network_feedforward import LOW_SPEE
 #LOW_SPEED_Y = [22, 20, 15, 10, 4, 2, 1]
 
 #less twitchy, less curve cutting, noticible twitch highway
-LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
+#LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
+
+
+#LOW_SPEED_Y = [16, 13, 8, 6, 3, 2, 1, 1] 
 
 #twitchy mid speed, good turning thou
 #LOW_SPEED_Y = [20, 18, 10, 8, 5, 3, 2, 1]
@@ -40,7 +43,8 @@ LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
 #still twitchy, but low speed is good, try slightly lower
 #LOW_SPEED_Y = [18, 16, 10, 8, 3, 2, 1, 1] 
 
-LOW_SPEED_Y = [16, 13, 8, 6, 3, 2, 1, 1] 
+#LOW_SPEED_Y = [16, 13, 8, 6, 3, 2, 1, 1] 
+
 #lower slow speed so it doesn't ampilfy into high speed
 #LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
 #LOW_SPEED_Y = [16, 15, 8, 6, 4, 3, 2, 1]
