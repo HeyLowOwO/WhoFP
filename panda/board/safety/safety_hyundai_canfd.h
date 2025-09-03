@@ -1,7 +1,7 @@
 #include "safety_hyundai_common.h"
 
 const SteeringLimits HYUNDAI_CANFD_STEERING_LIMITS = {
-  .max_steer = 610,
+  .max_steer = 950,
   .max_rt_delta = 90,
   .max_rt_interval = 250000,
   .max_rate_up = 10,
@@ -254,10 +254,10 @@ static bool hyundai_canfd_tx_hook(const CANPacket_t *to_send) {
 
       if (controls_allowed || lkas_on) {
         // *** global torque limit check ***
-        violation |= max_limit_check(desired_torque, 610, -610);
+        violation |= max_limit_check(desired_torque, 950, -950);
 
         // ready to blend in limits
-        desired_torque_last = MAX(-590, MIN(desired_torque, 590));
+        desired_torque_last = MAX(-910, MIN(desired_torque, 910));
         rt_torque_last = desired_torque;
         ts_torque_check_last = ts;
       }
