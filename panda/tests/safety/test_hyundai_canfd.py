@@ -17,7 +17,7 @@ class TestHyundaiCanfdBase(HyundaiButtonBase, common.PandaCarSafetyTest, common.
 
   MAX_RATE_UP = 10
   MAX_RATE_DOWN = 10
-  MAX_TORQUE = 610
+  MAX_TORQUE = 950
 
   MAX_RT_DELTA = 90
   RT_INTERVAL = 250000
