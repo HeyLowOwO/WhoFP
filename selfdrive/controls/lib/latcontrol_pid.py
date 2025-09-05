@@ -12,23 +12,12 @@ class LatControlPID(LatControl):
                              (CP.lateralTuning.pid.kiBP, CP.lateralTuning.pid.kiV),
                              k_f=CP.lateralTuning.pid.kf, pos_limit=self.steer_max, neg_limit=-self.steer_max)
     self.get_steer_feedforward = CI.get_steer_feedforward_function()
-    # Store original KP values for potential updates
-    self.original_kpBP = CP.lateralTuning.pid.kpBP
-    self.original_kpV = CP.lateralTuning.pid.kpV
 
   def reset(self):
     super().reset()
     self.pid.reset()
 
   def update(self, active, CS, VM, params, steer_limited, desired_curvature, llk, model_data=None, frogpilot_toggles=None):
-      # Update PID KP values if custom values are available
-    if (frogpilot_toggles and hasattr(frogpilot_toggles, 'steerKp') and 
-        hasattr(frogpilot_toggles, 'steerKpBP') and 
-        isinstance(frogpilot_toggles.steerKp, list) and len(frogpilot_toggles.steerKp) > 0):
-        self.pid.update_kp_ki((frogpilot_toggles.steerKpBP, frogpilot_toggles.steerKp),
-                              (self.original_kpBP, self.original_kpV))  # Keep original KI values 
-    
-    
     pid_log = log.ControlsState.LateralPIDState.new_message()
     pid_log.steeringAngleDeg = float(CS.steeringAngleDeg)
     pid_log.steeringRateDeg = float(CS.steeringRateDeg)
