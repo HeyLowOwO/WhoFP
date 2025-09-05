@@ -119,10 +119,7 @@ class LatControlTorque(LatControl):
                                             gravity_adjusted=True)
 
       freeze_integrator = steer_limited or CS.steeringPressed or CS.vEgo < 5
-      if hasattr(frogpilot_toggles, 'steerKp') and len(frogpilot_toggles.steerKp) > 1 and len(frogpilot_toggles.steerKp[1]) > 0:
-        self.pid._k_p = frogpilot_toggles.steerKp[1][0]
-      else:
-        self.pid._k_p = self.torque_params.kp
+      self.pid._k_p = frogpilot_toggles.steerKp
       output_torque = self.pid.update(pid_log.error,
                                       feedforward=ff,
                                       speed=CS.vEgo,
