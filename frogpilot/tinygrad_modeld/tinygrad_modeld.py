@@ -38,13 +38,6 @@ from openpilot.frogpilot.common.frogpilot_variables import get_frogpilot_toggles
 PROCESS_NAME = "frogpilot.tinygrad_modeld.tinygrad_modeld"
 SEND_RAW_PRED = os.getenv('SEND_RAW_PRED')
 
-# Lat smoothing based on speed and angle
-if CS.out.vEgo < 4.0:
-    LAT_SMOOTH_SECONDS = 0.1  # Always responsive at parking speeds
-elif abs(CS.out.steeringAngleDeg) > 25:  # Sharp turns
-    LAT_SMOOTH_SECONDS = 0.1
-else:  # Straight driving
-    LAT_SMOOTH_SECONDS = 0.25
   
 #LAT_SMOOTH_SECONDS = 0.25
 LONG_SMOOTH_SECONDS = 0.3
@@ -68,10 +61,19 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
         desired_curvature = prev_action.desiredCurvature
     else:
       desired_curvature = get_curvature_from_output(model_output, v_ego, lat_action_t, mlsim=mlsim)
-    if v_ego > MIN_LAT_CONTROL_SPEED:
-      desired_curvature = smooth_value(desired_curvature, prev_action.desiredCurvature, LAT_SMOOTH_SECONDS)
-    else:
-      desired_curvature = prev_action.desiredCurvature
+      
+    # NEW - Dynamic LAT_SMOOTH_SECONDS based on speed and steering angle
+if v_ego < 4.0:
+    lat_smooth = 0.1  # Responsive at parking speeds
+elif abs(prev_action.desiredCurvature * v_ego) > 0.5:  # Approximate steering angle from curvature
+    lat_smooth = 0.1  # Responsive during turns
+else:
+    lat_smooth = 0.25  # Smooth for straight driving
+
+if v_ego > MIN_LAT_CONTROL_SPEED:
+  desired_curvature = smooth_value(desired_curvature, prev_action.desiredCurvature, lat_smooth)
+else:
+  desired_curvature = prev_action.desiredCurvature
 
     return log.ModelDataV2.Action(desiredCurvature=float(desired_curvature),
                                   desiredAcceleration=float(desired_accel),
