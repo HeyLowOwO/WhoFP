@@ -69,19 +69,13 @@ class CarController(CarControllerBase):
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
 
     # Low-pass filter for small steering oscillations
-    base_tau = 0.1  # Time constant in seconds
-    alpha = DT_CTRL / (base_tau + DT_CTRL)  # Filter coefficient (~0.091)
-    
-    tiny_int = 8  # Increased from your current 3
+    base_tau = 0.15  # Time constant in seconds
+    alpha = DT_CTRL / (base_tau + DT_CTRL)  # Filter coefficient (~0.091)    
+    tiny_int = 12  # Increased from your current 3
     if abs(new_steer) <= tiny_int and abs(self.apply_steer_last) <= tiny_int:
         # Apply low-pass filtering instead of zeroing
         new_steer = int(alpha * new_steer + (1 - alpha) * self.apply_steer_last)
    
-    # hysteresis for tiny integer torque flipping
-    #tiny_int = 5 if CS.out.vEgoRaw < 11. else 2 # torque units; prevents sign flip around 0
-    #if abs(new_steer) <= tiny_int and abs(self.apply_steer_last) <= tiny_int:
-      # hold zero instead of flipping sign
-      #new_steer = 0
       
     apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
     apply_steer = clip(apply_steer, -self.params.STEER_MAX, self.params.STEER_MAX)
