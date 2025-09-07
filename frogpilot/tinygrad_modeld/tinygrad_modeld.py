@@ -43,9 +43,9 @@ SEND_RAW_PRED = os.getenv('SEND_RAW_PRED')
 LONG_SMOOTH_SECONDS = 0.3
 MIN_LAT_CONTROL_SPEED = 0.3
 
-
 def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.ModelDataV2.Action,
-                          lat_action_t: float, long_action_t: float, v_ego: float, mlsim: bool, is_v9: bool) -> log.ModelDataV2.Action:
+                          lat_action_t: float, long_action_t: float, v_ego: float, mlsim: bool, is_v9: bool, 
+                          steering_angle: float = 0.0) -> log.ModelDataV2.Action:                     
     plan = model_output['plan'][0]
     desired_accel, should_stop = get_accel_from_plan_tomb_raider(plan[:,Plan.VELOCITY][:,0],
                                                                  plan[:,Plan.ACCELERATION][:,0],
@@ -62,19 +62,18 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
     else:
       desired_curvature = get_curvature_from_output(model_output, v_ego, lat_action_t, mlsim=mlsim)
       
-    # NEW - Dynamic LAT_SMOOTH_SECONDS based on speed and steering angle
+    # Dynamic lateral smoothing based on speed and steering angle
     if v_ego < 4.0:
-      lat_smooth = 0.1  # Responsive at parking speeds
-    elif abs(prev_action.desiredCurvature * v_ego) > 0.5:  # Approximate steering angle from curvature
+       lat_smooth = 0.1  # Responsive at parking speeds
+    elif abs(steering_angle) > 25:
       lat_smooth = 0.1  # Responsive during turns
     else:
-      lat_smooth = 0.25  # Smooth for straight driving
+       lat_smooth = 0.25  # Smooth for straight driving
 
     if v_ego > MIN_LAT_CONTROL_SPEED:
       desired_curvature = smooth_value(desired_curvature, prev_action.desiredCurvature, lat_smooth)
     else:
       desired_curvature = prev_action.desiredCurvature
-
     return log.ModelDataV2.Action(desiredCurvature=float(desired_curvature),
                                   desiredAcceleration=float(desired_accel),
                                   shouldStop=bool(should_stop))
@@ -445,7 +444,7 @@ def main(demo=False):
       drivingdata_send = messaging.new_message('drivingModelData')
       posenet_send = messaging.new_message('cameraOdometry')
 
-      action = get_action_from_model(model_output, prev_action, lat_delay + DT_MDL, long_delay + DT_MDL, v_ego, model.mlsim, model.is_v9)
+      action = get_action_from_model(model_output, prev_action, lat_delay + DT_MDL, long_delay + DT_MDL, v_ego, model.mlsim, model.is_v9, sm["carState"].steeringAngleDeg)
       prev_action = action
       fill_model_msg(drivingdata_send, modelv2_send, model_output, action,
                      publish_state, meta_main.frame_id, meta_extra.frame_id, frame_id,
