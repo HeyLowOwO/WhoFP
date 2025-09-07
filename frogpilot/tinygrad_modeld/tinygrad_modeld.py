@@ -63,17 +63,17 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
       desired_curvature = get_curvature_from_output(model_output, v_ego, lat_action_t, mlsim=mlsim)
       
     # NEW - Dynamic LAT_SMOOTH_SECONDS based on speed and steering angle
-if v_ego < 4.0:
-    lat_smooth = 0.1  # Responsive at parking speeds
-elif abs(prev_action.desiredCurvature * v_ego) > 0.5:  # Approximate steering angle from curvature
-    lat_smooth = 0.1  # Responsive during turns
-else:
-    lat_smooth = 0.25  # Smooth for straight driving
+    if v_ego < 4.0:
+      lat_smooth = 0.1  # Responsive at parking speeds
+    elif abs(prev_action.desiredCurvature * v_ego) > 0.5:  # Approximate steering angle from curvature
+      lat_smooth = 0.1  # Responsive during turns
+    else:
+      lat_smooth = 0.25  # Smooth for straight driving
 
-if v_ego > MIN_LAT_CONTROL_SPEED:
-  desired_curvature = smooth_value(desired_curvature, prev_action.desiredCurvature, lat_smooth)
-else:
-  desired_curvature = prev_action.desiredCurvature
+    if v_ego > MIN_LAT_CONTROL_SPEED:
+      desired_curvature = smooth_value(desired_curvature, prev_action.desiredCurvature, lat_smooth)
+    else:
+      desired_curvature = prev_action.desiredCurvature
 
     return log.ModelDataV2.Action(desiredCurvature=float(desired_curvature),
                                   desiredAcceleration=float(desired_accel),
