@@ -38,8 +38,15 @@ from openpilot.frogpilot.common.frogpilot_variables import get_frogpilot_toggles
 PROCESS_NAME = "frogpilot.tinygrad_modeld.tinygrad_modeld"
 SEND_RAW_PRED = os.getenv('SEND_RAW_PRED')
 
-
-LAT_SMOOTH_SECONDS = 0.25
+# Lat smoothing based on speed and angle
+if CS.out.vEgo < 4.0:
+    LAT_SMOOTH_SECONDS = 0.1  # Always responsive at parking speeds
+elif abs(CS.out.steeringAngleDeg) > 25:  # Sharp turns
+    LAT_SMOOTH_SECONDS = 0.1
+else:  # Straight driving
+    LAT_SMOOTH_SECONDS = 0.25
+  
+#LAT_SMOOTH_SECONDS = 0.25
 LONG_SMOOTH_SECONDS = 0.3
 MIN_LAT_CONTROL_SPEED = 0.3
 
