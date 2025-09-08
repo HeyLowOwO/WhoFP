@@ -69,9 +69,9 @@ class CarController(CarControllerBase):
     new_steer = int(round(actuators.steer * self.params.STEER_MAX))
 
     # Low-pass filter for small steering oscillations
-    base_tau = 0.15  # Time constant in seconds
+    base_tau = 0.2  # Time constant in seconds
     alpha = DT_CTRL / (base_tau + DT_CTRL)  # Filter coefficient (~0.091)    
-    tiny_int = 12  # Increased from your current 3
+    tiny_int = 15  # Increased from your current 3
     if abs(new_steer) <= tiny_int and abs(self.apply_steer_last) <= tiny_int:
         # Apply low-pass filtering instead of zeroing
         new_steer = int(alpha * new_steer + (1 - alpha) * self.apply_steer_last)
