@@ -39,7 +39,7 @@ PROCESS_NAME = "frogpilot.tinygrad_modeld.tinygrad_modeld"
 SEND_RAW_PRED = os.getenv('SEND_RAW_PRED')
 
   
-#LAT_SMOOTH_SECONDS = 0.25
+LAT_SMOOTH_SECONDS = 0.30  #default lat smooth
 LONG_SMOOTH_SECONDS = 0.3
 MIN_LAT_CONTROL_SPEED = 0.3
 
@@ -63,12 +63,12 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
       desired_curvature = get_curvature_from_output(model_output, v_ego, lat_action_t, mlsim=mlsim)
       
     # Dynamic lateral smoothing based on speed and steering angle
-    if v_ego < 4.0:
+    if v_ego < 9:
        lat_smooth = 0.1  # Responsive at parking speeds
     elif abs(steering_angle) > 25:
       lat_smooth = 0.1  # Responsive during turns
     else:
-       lat_smooth = 0.25  # Smooth for straight driving
+       lat_smooth = 0.30  # Smooth for straight driving
 
     if v_ego > MIN_LAT_CONTROL_SPEED:
       desired_curvature = smooth_value(desired_curvature, prev_action.desiredCurvature, lat_smooth)
@@ -394,7 +394,7 @@ def main(demo=False):
     is_rhd = sm["driverMonitoringState"].isRHD
     frame_id = sm["roadCameraState"].frameId
     v_ego = max(sm["carState"].vEgo, 0.)
-    lat_delay = sm["liveDelay"].lateralDelay + 0.25  # Use default smoothing for delay calculation
+    lat_delay = sm["liveDelay"].lateralDelay + LAT_SMOOTH_SECONDS  # Use default smoothing for delay calculation
     lateral_control_params = np.array([v_ego, lat_delay], dtype=np.float32)
     if sm.updated["liveCalibration"] and sm.seen['roadCameraState'] and sm.seen['deviceState']:
       device_from_calib_euler = np.array(sm["liveCalibration"].rpyCalib, dtype=np.float32)
