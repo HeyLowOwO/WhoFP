@@ -25,7 +25,8 @@ from openpilot.frogpilot.controls.lib.neural_network_feedforward import LOW_SPEE
 #LOW_SPEED_Y = [15, 13, 10, 5]
 
 LOW_SPEED_X = [0, 5, 8, 12, 18, 25, 30, 35]
-LOW_SPEED_Y = [12, 10, 6, 4, 2, 1, 1, 1]
+#LOW_SPEED_Y = [12, 10, 6, 4, 2, 1, 1, 1]
+LOW_SPEED_Y = [15, 12, 6, 4, 2, 1, 1, 1]
 
 #LOW_SPEED_X = [0, 5, 10, 20, 30]
 #LOW_SPEED_Y = [22, 15, 13, 10, 5]
