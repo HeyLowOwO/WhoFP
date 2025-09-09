@@ -77,8 +77,8 @@ class CarController(CarControllerBase):
         new_steer = int(alpha * new_steer + (1 - alpha) * self.apply_steer_last)
 
     # Deadband filter for tiny oscillations
-    if abs(new_steer) <= 8:  
-        new_steer = 0  # Zero out the smallest corrections entirely
+    #if abs(new_steer) <= 8:  
+     #   new_steer = 0  # Zero out the smallest corrections entirely
    
       
     apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
