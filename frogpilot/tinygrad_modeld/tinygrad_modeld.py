@@ -70,14 +70,14 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
       get_action_from_model.post_turn_counter = 0
       get_action_from_model.was_in_turn = False
 
-    currently_in_turn = (abs(steering_angle) > 25)
+    currently_in_turn = (abs(steering_angle) > 35)
 
     # Detect turn exit and start timer
     if get_action_from_model.was_in_turn and not currently_in_turn:
       get_action_from_model.post_turn_counter = POST_TURN_FRAMES
 
     # Dynamic lateral smoothing with post-turn timer
-    if v_ego < 7.0:
+    if v_ego < 5.0:
       lat_smooth = 0.1  # Parking speeds
     elif currently_in_turn or get_action_from_model.post_turn_counter > 0:
       lat_smooth = 0.1  # Active for POST_TURN_FRAMES after < 25 degrees
