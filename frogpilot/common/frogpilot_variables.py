@@ -579,7 +579,7 @@ class FrogPilotVariables:
     startAccel = CP.startAccel
     stopAccel = CP.stopAccel
     steerActuatorDelay = CP.steerActuatorDelay
-    steerKp = CP.lateralTuning.torque.kp
+    steerKp = CP.lateralTuning.torque.kp[1][0] if isinstance(CP.lateralTuning.torque.kp, list) else CP.lateralTuning.torque.kp
     steerRatio = CP.steerRatio
     toggle.stoppingDecelRate = CP.stoppingDecelRate
     taco_hacks_allowed = toggle.car_make == "hyundai" and CP.safetyConfigs[0].safetyModel == SafetyModel.hyundaiCanfd
