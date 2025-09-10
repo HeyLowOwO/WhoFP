@@ -39,7 +39,7 @@ PROCESS_NAME = "frogpilot.tinygrad_modeld.tinygrad_modeld"
 SEND_RAW_PRED = os.getenv('SEND_RAW_PRED')
 
   
-LAT_SMOOTH_SECONDS = 0.30  #default lat smooth
+LAT_SMOOTH_SECONDS = 0.2  #default lat smooth
 LONG_SMOOTH_SECONDS = 0.3
 MIN_LAT_CONTROL_SPEED = 0.3
 
@@ -63,7 +63,7 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
       desired_curvature = get_curvature_from_output(model_output, v_ego, lat_action_t, mlsim=mlsim)
       
     # Frame-based timer for post-turn smoothing (Lines 65 - 95)
-    POST_TURN_FRAMES = 60  # ~3 seconds at 20Hz
+    POST_TURN_FRAMES = 40  # ~3 seconds at 20Hz
 
     # Initialize static variables using function attributes
     if not hasattr(get_action_from_model, 'post_turn_counter'):
@@ -82,7 +82,7 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
     elif currently_in_turn or get_action_from_model.post_turn_counter > 0:
       lat_smooth = 0.1  # Active for POST_TURN_FRAMES after < 25 degrees
     else:
-      lat_smooth = 0.30  # Straight driving
+      lat_smooth = 0.20  # Straight driving
 
     # Update counters
     if get_action_from_model.post_turn_counter > 0:
