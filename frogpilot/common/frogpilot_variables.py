@@ -614,11 +614,10 @@ class FrogPilotVariables:
     toggle.friction = np.clip(params.get_float("SteerFriction"), 0, 0.5) if advanced_lateral_tuning and tuning_level >= level["SteerFriction"] else friction
     toggle.use_custom_friction = toggle.friction != friction and is_torque_car and not toggle.force_auto_tune or toggle.force_auto_tune_off
     toggle.steerKp = [[0], [np.clip(params.get_float("SteerKP"), steerKp * 0.5, steerKp * 1.5) if advanced_lateral_tuning and is_torque_car and tuning_level >= level["SteerKP"] else steerKp]]
-    toggle.use_custom_steerKp = toggle.steerKp[1][0] != steerKp and is_torque_car and (not toggle.force_auto_tune or toggle.force_auto_tune_off)
     toggle.latAccelFactor = np.clip(params.get_float("SteerLatAccel"), latAccelFactor * 0.75, latAccelFactor * 1.25) if advanced_lateral_tuning and tuning_level >= level["SteerLatAccel"] else latAccelFactor
-    toggle.use_custom_latAccelFactor = toggle.latAccelFactor != latAccelFactor and is_torque_car and (not toggle.force_auto_tune or toggle.force_auto_tune_off)
+    toggle.use_custom_latAccelFactor = toggle.latAccelFactor != latAccelFactor and is_torque_car and not toggle.force_auto_tune or toggle.force_auto_tune_off
     toggle.steerRatio = np.clip(params.get_float("SteerRatio"), steerRatio * 0.5, steerRatio * 1.5) if advanced_lateral_tuning and tuning_level >= level["SteerRatio"] else steerRatio
-    toggle.use_custom_steerRatio = toggle.steerRatio != steerRatio and (not toggle.force_auto_tune or toggle.force_auto_tune_off)
+    toggle.use_custom_steerRatio = toggle.steerRatio != steerRatio and not toggle.force_auto_tune or toggle.force_auto_tune_off
 
     advanced_longitudinal_tuning = params.get_bool("AdvancedLongitudinalTune") if tuning_level >= level["AdvancedLongitudinalTune"] else default.get_bool("AdvancedLongitudinalTune")
     toggle.longitudinalActuatorDelay = np.clip(params.get_float("LongitudinalActuatorDelay"), 0, 1) if advanced_longitudinal_tuning and tuning_level >= level["LongitudinalActuatorDelay"] else longitudinalActuatorDelay

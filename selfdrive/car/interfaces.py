@@ -167,16 +167,6 @@ class CarInterfaceBase(ABC):
     # Enable torque controller for all cars that do not use angle based steering
     if ret.steerControlType != car.CarParams.SteerControlType.angle and params.get_bool("LateralTune") and (params.get_bool("NNFF") or params.get_bool("NNFFLite")):
       CarInterfaceBase.configure_torque_tune(candidate, ret.lateralTuning)
-  
-      # Apply FrogPilot custom tuning parameters
-      if hasattr(frogpilot_toggles, 'use_custom_steerKp') and frogpilot_toggles.use_custom_steerKp:
-        ret.lateralTuning.torque.kp = frogpilot_toggles.steerKp[1][0]
-    
-      if hasattr(frogpilot_toggles, 'use_custom_friction') and frogpilot_toggles.use_custom_friction:
-        ret.lateralTuning.torque.friction = frogpilot_toggles.friction
-    
-      if hasattr(frogpilot_toggles, 'use_custom_latAccelFactor') and frogpilot_toggles.use_custom_latAccelFactor:
-        ret.lateralTuning.torque.latAccelFactor = frogpilot_toggles.latAccelFactor
 
     return ret
 
