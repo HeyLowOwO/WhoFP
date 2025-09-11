@@ -71,14 +71,14 @@ class CarController(CarControllerBase):
     # Low-pass filter for small steering oscillations
     base_tau = 0.2  # Time constant in seconds
     alpha = DT_CTRL / (base_tau + DT_CTRL)  # Filter coefficient   
-    tiny_int = 15 # Increased from your current 3
+    tiny_int = 20 # Increased from your current 3
     if abs(new_steer) <= tiny_int and abs(self.apply_steer_last) <= tiny_int:
         # Apply low-pass filtering instead of zeroing
         new_steer = int(alpha * new_steer + (1 - alpha) * self.apply_steer_last)
 
     # Deadband filter for tiny oscillations
-    #if abs(new_steer) <= 8:  
-     #   new_steer = 0  # Zero out the smallest corrections entirely
+    if abs(new_steer) <= 8:  
+        new_steer = 0  # Zero out the smallest corrections entirely
    
       
     apply_steer = apply_driver_steer_torque_limits(new_steer, self.apply_steer_last, CS.out.steeringTorque, self.params)
