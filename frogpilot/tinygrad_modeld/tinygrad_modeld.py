@@ -62,25 +62,29 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
     else:
       desired_curvature = get_curvature_from_output(model_output, v_ego, lat_action_t, mlsim=mlsim)
       
-    # Frame-based timer for post-turn smoothing (Lines 65 - 95)
-    POST_TURN_FRAMES = 40  # ~3 seconds at 20Hz
+    # Frame-based timer for post-turn smoothing
+    POST_TURN_FRAMES = 40  # ~2 seconds at 20Hz
 
     # Initialize static variables using function attributes
     if not hasattr(get_action_from_model, 'post_turn_counter'):
       get_action_from_model.post_turn_counter = 0
       get_action_from_model.was_in_turn = False
 
-    currently_in_turn = (abs(steering_angle) > 35)
+    # Turn detection: steering angle OR blinker active
+    currently_in_turn = abs(steering_angle) > 35
+    blinker_active = False
+    if car_state is not None:
+        blinker_active = car_state.leftBlinker or car_state.rightBlinker
 
-    # Detect turn exit and start timer
+    # Detect turn exit and start timer, once steering angle is less than currently_in_turn
     if get_action_from_model.was_in_turn and not currently_in_turn:
       get_action_from_model.post_turn_counter = POST_TURN_FRAMES
 
     # Dynamic lateral smoothing with post-turn timer
-    if v_ego < 5.0:
+    if v_ego < 4.0:
       lat_smooth = 0.1  # Parking speeds
-    elif currently_in_turn or get_action_from_model.post_turn_counter > 0:
-      lat_smooth = 0.1  # Active for POST_TURN_FRAMES after < 25 degrees
+    elif currently_in_turn or blinker_active or get_action_from_model.post_turn_counter > 0:
+      lat_smooth = 0.1  # Active for POST_TURN_FRAMES
     else:
       lat_smooth = 0.20  # Straight driving
 
@@ -463,7 +467,7 @@ def main(demo=False):
       drivingdata_send = messaging.new_message('drivingModelData')
       posenet_send = messaging.new_message('cameraOdometry')
 
-      action = get_action_from_model(model_output, prev_action, lat_delay + DT_MDL, long_delay + DT_MDL, v_ego, model.mlsim, model.is_v9, sm["carState"].steeringAngleDeg)
+      action = get_action_from_model(model_output, prev_action, lat_delay + DT_MDL, long_delay + DT_MDL, v_ego, model.mlsim, model.is_v9, sm["carState"].steeringAngleDeg, sm["carState"])
       prev_action = action
       fill_model_msg(drivingdata_send, modelv2_send, model_output, action,
                      publish_state, meta_main.frame_id, meta_extra.frame_id, frame_id,
