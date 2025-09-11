@@ -43,6 +43,7 @@ LAT_SMOOTH_SECONDS = 0.2  #default lat smooth
 LONG_SMOOTH_SECONDS = 0.3
 MIN_LAT_CONTROL_SPEED = 0.3
 
+
 def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.ModelDataV2.Action,
                           lat_action_t: float, long_action_t: float, v_ego: float, mlsim: bool, is_v9: bool, 
                           steering_angle: float = 0.0, car_state=None) -> log.ModelDataV2.Action:
