@@ -126,6 +126,16 @@ class LatControlTorque(LatControl):
                                       speed=CS.vEgo,
                                       freeze_integrator=freeze_integrator)
 
+      #Add smoothing at the ±1 control layer
+      if not hasattr(self, 'prev_output_torque'):
+          self.prev_output_torque = 0.0
+
+      # Apply low-pass filtering to the internal control signal
+      base_tau = 0.15  # Adjust this value
+      alpha = 0.05 / (base_tau + 0.05)  # Assuming 20Hz control (0.05s DT)
+      output_torque = alpha * output_torque + (1 - alpha) * self.prev_output_torque
+      self.prev_output_torque = output_torque
+
       pid_log.active = True
       pid_log.p = self.pid.p
       pid_log.i = self.pid.i
