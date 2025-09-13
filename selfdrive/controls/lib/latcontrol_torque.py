@@ -125,14 +125,18 @@ class LatControlTorque(LatControl):
 
       freeze_integrator = steer_limited or CS.steeringPressed or CS.vEgo < 5
       self.pid._k_p = frogpilot_toggles.steerKp
-      
+
+      # Add deadband logic here:
+      if abs(pid_log.error) < 0.02:  # Threshold for "good enough" centering
+          pid_log.error *= 0.1  # Heavily reduce micro-corrections
+  
       output_torque = self.pid.update(pid_log.error,
                                       feedforward=ff,
                                       speed=CS.vEgo,
                                       freeze_integrator=freeze_integrator)
 
       # Apply low-pass filtering to the internal control signal
-      base_tau = 0.15  # Adjust this value, higher is more smoothing
+      base_tau = 0.2  # Adjust this value, higher is more smoothing
       alpha = 0.05 / (base_tau + 0.05)  # Assuming 20Hz control (0.05s DT)
       output_torque = alpha * output_torque + (1 - alpha) * self.prev_output_torque
       self.prev_output_torque = output_torque
