@@ -41,9 +41,9 @@ def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_steer, 
 
   #damp_factor over 3 speeds
   if v_ego <= 18: #40mph
-    damp_factor = 100
+    damp_factor = 50
   elif v_ego <= 26: #58mph
-    damp_factor = 100
+    damp_factor = 200
   else:
     damp_factor = 200
     
