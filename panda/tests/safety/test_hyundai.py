@@ -50,9 +50,9 @@ class TestHyundaiSafety(HyundaiButtonBase, common.PandaCarSafetyTest, common.Dri
   FWD_BLACKLISTED_ADDRS = {2: [0x340, 0x485]}
   FWD_BUS_LOOKUP = {0: 2, 2: 0}
 
-  MAX_RATE_UP = 10
+  MAX_RATE_UP = 5
   MAX_RATE_DOWN = 10
-  MAX_TORQUE = 950
+  MAX_TORQUE = 720
   MAX_RT_DELTA = 112
   RT_INTERVAL = 250000
   DRIVER_TORQUE_ALLOWANCE = 50
