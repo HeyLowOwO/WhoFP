@@ -124,7 +124,7 @@ class LatControlTorque(LatControl):
                                             gravity_adjusted=True)
 
       freeze_integrator = steer_limited or CS.steeringPressed or CS.vEgo < 5
-      self.pid._k_p = .40
+      self.pid._k_p = frogpilot_toggles.steerKp[1][0]
 
       # Add deadband logic here:
       if abs(pid_log.error) < 0.02:  # Threshold for "good enough" centering
