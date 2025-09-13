@@ -124,7 +124,16 @@ class LatControlTorque(LatControl):
                                             gravity_adjusted=True)
 
       freeze_integrator = steer_limited or CS.steeringPressed or CS.vEgo < 5
-      self.pid._k_p = frogpilot_toggles.steerKp
+      
+      # Speed-dependent KP reduction to prevent EPS resonance
+      if CS.vEgo < 5.0:
+          gain_multiplier = 0.9  # 0.55 → 0.50 at low speeds
+      elif CS.vEgo > 11.0:
+          gain_multiplier = 0.5  # 0.55 → 0.28 at highway speeds  
+      else:
+          gain_multiplier = 0.7  # 0.55 → 0.39 at city speeds
+
+      self.pid._k_p = frogpilot_toggles.steerKp[1][0] * gain_multiplier
 
       # Add deadband logic here:
       if abs(pid_log.error) < 0.02:  # Threshold for "good enough" centering
