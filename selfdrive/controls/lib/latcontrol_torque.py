@@ -124,15 +124,6 @@ class LatControlTorque(LatControl):
                                             gravity_adjusted=True)
 
       freeze_integrator = steer_limited or CS.steeringPressed or CS.vEgo < 5
-      
-      # Speed-dependent KP reduction to prevent EPS resonance
-      if CS.vEgo < 5.0:
-          gain_multiplier = 0.9  # 0.55 → 0.50 at low speeds
-      elif CS.vEgo > 11.0:
-          gain_multiplier = 0.5  # 0.55 → 0.28 at highway speeds  
-      else:
-          gain_multiplier = 0.7  # 0.55 → 0.39 at city speeds
-
       self.pid._k_p = 0.6 * gain_multiplier
 
       # Add deadband logic here:
