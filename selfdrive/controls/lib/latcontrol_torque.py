@@ -136,7 +136,7 @@ class LatControlTorque(LatControl):
                                       freeze_integrator=freeze_integrator)
 
       # Apply low-pass filtering to the internal control signal
-      base_tau = 0.2  # Adjust this value, higher is more smoothing
+      base_tau = 0.25  # Adjust this value, higher is more smoothing
       alpha = 0.05 / (base_tau + 0.05)  # Assuming 20Hz control (0.05s DT)
       output_torque = alpha * output_torque + (1 - alpha) * self.prev_output_torque
       self.prev_output_torque = output_torque
