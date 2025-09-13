@@ -133,7 +133,7 @@ class LatControlTorque(LatControl):
       else:
           gain_multiplier = 0.7  # 0.55 → 0.39 at city speeds
 
-      self.pid._k_p = frogpilot_toggles.steerKp[1][0] * gain_multiplier
+      self.pid._k_p = 0.6 * gain_multiplier
 
       # Add deadband logic here:
       if abs(pid_log.error) < 0.02:  # Threshold for "good enough" centering
