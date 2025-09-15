@@ -119,14 +119,16 @@ def main():
 
   model = ModelState()
   cloudlog.warning("models loaded, dmonitoringmodeld starting")
-  Params().put_bool("DmModelInitialized", True)
 
   cloudlog.warning("connecting to driver stream")
   vipc_client = VisionIpcClient("camerad", VisionStreamType.VISION_STREAM_DRIVER, True)
-  while not vipc_client.connect(False):
+  start_time = time.time()
+  while not vipc_client.connect(False) and (time.time() - start_time < 10):
     time.sleep(0.1)
-  assert vipc_client.is_connected()
-  cloudlog.warning(f"connected with buffer size: {vipc_client.buffer_len}")
+  if not vipc_client.is_connected():
+    cloudlog.error("DM camera connect timeout after 10s, using default calib")
+  else:
+    cloudlog.warning(f"connected with buffer size: {vipc_client.buffer_len}")
 
   sm = SubMaster(["liveCalibration"])
   pm = PubMaster(["driverStateV2"])
@@ -134,18 +136,31 @@ def main():
   calib = np.zeros(CALIB_LEN, dtype=np.float32)
   # last = 0
 
+  dm_initialized = False
   while True:
     buf = vipc_client.recv()
     if buf is None:
       continue
 
+    if not dm_initialized:
+      Params().put_bool("DmModelInitialized", True)
+      dm_initialized = True
+      cloudlog.warning("DM initialized after first frame")
+
     sm.update(0)
     if sm.updated["liveCalibration"]:
       calib[:] = np.array(sm["liveCalibration"].rpyCalib)
+    else:
+      calib[:] = np.array([0.0, 0.0, 0.0])  # fallback to default
 
-    t1 = time.perf_counter()
-    model_output, dsp_execution_time = model.run(buf, calib)
-    t2 = time.perf_counter()
+    try:
+      t1 = time.perf_counter()
+      model_output, dsp_execution_time = model.run(buf, calib)
+      t2 = time.perf_counter()
+    except Exception as e:
+      cloudlog.exception(f"DM model.execute failed: {e}")
+      model_output = np.zeros(OUTPUT_SIZE, dtype=np.float32)
+      dsp_execution_time = 0.0
 
     pm.send("driverStateV2", get_driverstate_packet(model_output, vipc_client.frame_id, vipc_client.timestamp_sof, t2 - t1, dsp_execution_time))
     # print("dmonitoring process: %.2fms, from last %.2fms\n" % (t2 - t1, t1 - last))
