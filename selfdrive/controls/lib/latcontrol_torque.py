@@ -85,7 +85,7 @@ class LatControlTorque(LatControl):
     pid_log = log.ControlsState.LateralTorqueState.new_message()
     if not active:
       output_torque = 0.0
-      self.prev_output_torque = 0.0
+      self.prev_output_torque = 0.0  #related to smoothing
       pid_log.active = False
     else:
       actual_curvature_vm = -VM.calc_curvature(math.radians(CS.steeringAngleDeg - params.angleOffsetDeg), CS.vEgo, params.roll)
@@ -137,13 +137,13 @@ class LatControlTorque(LatControl):
 
       # Apply low-pass filtering to the internal control signal
       # Variable smoothing based on error magnitude
-      if abs(pid_log.error) < 0.03:
-          base_tau = 0.20  # Heavy smoothing for small errors
-      else:
-          base_tau = 0.15  # Normal smoothing for real corrections  # Adjust this value, higher is more smoothing
-      alpha = 0.05 / (base_tau + 0.05)  # Assuming 20Hz control (0.05s DT)
-      output_torque = alpha * output_torque + (1 - alpha) * self.prev_output_torque
-      self.prev_output_torque = output_torque
+      #if abs(pid_log.error) < 0.03:
+      #    base_tau = 0.20  # Heavy smoothing for small errors
+      #else:
+      #    base_tau = 0.15  # Normal smoothing for real corrections  # Adjust this value, higher is more smoothing
+      #alpha = 0.05 / (base_tau + 0.05)  # Assuming 20Hz control (0.05s DT)
+      #output_torque = alpha * output_torque + (1 - alpha) * self.prev_output_torque
+      #self.prev_output_torque = output_torque
 
       pid_log.active = True
       pid_log.p = self.pid.p
