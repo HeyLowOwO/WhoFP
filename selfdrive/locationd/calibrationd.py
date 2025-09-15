@@ -85,12 +85,6 @@ class Calibrator:
     self.reset(rpy_init, valid_blocks, wide_from_device_euler, height)
     self.update_status()
 
-    # Restore from partial invalid state on boot
-    if self.cal_status == log.LiveCalibrationData.Status.invalid and self.valid_blocks > 0:
-      self.reset(self.rpys[self.block_idx - 1] if self.block_idx > 0 else RPY_INIT, valid_blocks=1, smooth_from=self.rpy)
-      self.update_status()
-      cloudlog.warning("Restored partial calibration on boot")
-
   def reset(self, rpy_init: np.ndarray = RPY_INIT,
                   valid_blocks: int = 0,
                   wide_from_device_euler_init: np.ndarray = WIDE_FROM_DEVICE_EULER_INIT,
@@ -168,7 +162,7 @@ class Calibrator:
       self.reset(self.rpys[self.block_idx - 1], valid_blocks=1, smooth_from=self.rpy)
       self.cal_status = log.LiveCalibrationData.Status.recalibrating
 
-    write_this_cycle = (self.cal_status == log.LiveCalibrationData.Status.calibrated) or ((self.idx == 0) and (self.block_idx % 10 == 0))
+    write_this_cycle = (self.idx == 0) and (self.block_idx % (INPUTS_WANTED//5) == 5)
     if self.param_put and write_this_cycle:
       self.params.put_nonblocking("CalibrationParams", self.get_msg(True).to_bytes())
 
@@ -230,9 +224,6 @@ class Calibrator:
       self.block_idx = self.block_idx % INPUTS_WANTED
 
     self.update_status()
-
-    if self.param_put and self.cal_status == log.LiveCalibrationData.Status.calibrated:
-      self.params.put_nonblocking("CalibrationParams", self.get_msg(True).to_bytes())
 
     return new_rpy
 
