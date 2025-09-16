@@ -38,14 +38,6 @@ class CanBus(CanBusBase):
 def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_steer, v_ego):
 
   ret = []
-
-  #damp_factor over 3 speeds
-  if v_ego <= 18: #40mph
-    damp_factor = 100
-  elif v_ego <= 26: #58mph
-    damp_factor = 200
-  else:
-    damp_factor = 200
     
   values = {
     "LKA_MODE": 2,
@@ -57,7 +49,7 @@ def create_steering_messages(packer, CP, CAN, enabled, lat_active, apply_steer, 
     "HAS_LANE_SAFETY": 0,  # hide LKAS settings
     "NEW_SIGNAL_1": 0,
     "NEW_SIGNAL_2": 0,
-    "DAMP_FACTOR": damp_factor,  # can potentially tuned for better perf [3, 200]
+    "DAMP_FACTOR": 100,  # can potentially tuned for better perf [3, 200]
   }
 
   if CP.flags & HyundaiFlags.CANFD_HDA2:
