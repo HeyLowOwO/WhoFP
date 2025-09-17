@@ -14,7 +14,6 @@ def dmonitoringd_thread():
   params = Params()
   pm = messaging.PubMaster(['driverMonitoringState'])
   sm = messaging.SubMaster(['driverStateV2', 'liveCalibration', 'carState', 'controlsState', 'modelV2', 'carControl'], poll='driverStateV2')
-  last_valid_driver_state = None
 
   DM = DriverMonitoring(rhd_saved=params.get_bool("IsRhdDetected"), always_on=params.get_bool("AlwaysOnDM"))
 
@@ -23,8 +22,7 @@ def dmonitoringd_thread():
 
   # 20Hz <- dmonitoringmodeld
   while True:
-    timeout = 100 if sm.frame == -1 else 0
-    sm.update(timeout)
+    sm.update()
     if not sm.updated['driverStateV2']:
       # iterate when model has new output
       continue
@@ -37,10 +35,6 @@ def dmonitoringd_thread():
 
     # publish
     dat = DM.get_state_packet(valid=valid or driver_view_enabled)
-    if valid:
-      last_valid_driver_state = dat
-    if not valid and last_valid_driver_state is not None:
-      dat = last_valid_driver_state  # use cached if current invalid
     pm.send('driverMonitoringState', dat)
 
     # load live always-on toggle
