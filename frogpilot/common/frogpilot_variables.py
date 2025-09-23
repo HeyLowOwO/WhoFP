@@ -862,7 +862,7 @@ class FrogPilotVariables:
           blacklisted_models = (params.get("BlacklistedModels", encoding="utf-8") or "").split(",")
           selectable_models = [model for model in downloaded_models if model not in blacklisted_models]
           toggle.model = random.choice(selectable_models) if selectable_models else default.get("Model", encoding="utf-8")
-          toggle.model_name = "Mystery Model 👻"
+          toggle.model_name = toggle.available_model_names.split(",")[toggle.available_models.split(",").index(toggle.model)] #display actual name and not "mystery model"
           toggle.model_version = toggle.model_versions.split(",")[toggle.available_models.split(",").index(toggle.model)]
       else:
         toggle.model = params.get("Model", encoding="utf-8") if tuning_level >= level["Model"] else default.get("Model", encoding="utf-8")
