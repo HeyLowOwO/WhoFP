@@ -26,6 +26,11 @@ MAX_LAT_JERK_UP = 2.5            # m/s^3
 LOW_SPEED_X = [0, 10, 20, 30]
 LOW_SPEED_Y = [15, 13, 10, 5]
 
+# Dynamic kP reduction during lane changes at lane change speeds for a set amount of time
+BLINKER_KP_DURATION = 3.0  # seconds to reduce kp after blinker activation
+BLINKER_KP_MULTIPLIER = 0.4  # reduce kp by this amount during lane changes
+BLINKER_MIN_SPEED = 7.0  # minimum speed (m/s) to enable blinker kp reduction
+
 
 class LatControlTorque(LatControl):
   def __init__(self, CP, CI, dt):
@@ -33,6 +38,15 @@ class LatControlTorque(LatControl):
     self.torque_params = CP.lateralTuning.torque
     self.torque_from_lateral_accel = CI.torque_from_lateral_accel()
     self.lateral_accel_from_torque = CI.lateral_accel_from_torque()
+    
+    # Store the base kp value
+    self.base_kp = self.torque_params.kp
+    
+    # Blinker tracking variables
+    self.blinker_active_timer = 0.0
+    self.left_blinker_prev = False
+    self.right_blinker_prev = False
+    
     self.pid = PIDController(self.torque_params.kp, self.torque_params.ki,
                              k_f=self.torque_params.kf, rate=1/self.dt)
     self.update_limits()
@@ -57,7 +71,25 @@ class LatControlTorque(LatControl):
     if not active:
       output_torque = 0.0
       pid_log.active = False
+      self.blinker_active_timer = 0.0  # Reset timer when not active
     else:
+      # Track blinker activation - start timer on rising edge (only above minimum speed)
+      blinker_active = CS.leftBlinker or CS.rightBlinker
+      if blinker_active and not (self.left_blinker_prev or self.right_blinker_prev) and CS.vEgo > BLINKER_MIN_SPEED:
+        # Blinker just turned on above minimum speed - start the timer
+        self.blinker_active_timer = BLINKER_KP_DURATION
+      
+      # Update previous blinker state
+      self.left_blinker_prev = CS.leftBlinker
+      self.right_blinker_prev = CS.rightBlinker
+      
+      # Decrease timer
+      if self.blinker_active_timer > 0:
+        self.blinker_active_timer -= self.dt
+      
+      # Apply blinker multiplier if timer is active
+      current_kp = self.base_kp * (BLINKER_KP_MULTIPLIER if self.blinker_active_timer > 0 else 1.0)
+      
       measured_curvature = -VM.calc_curvature(math.radians(CS.steeringAngleDeg - params.angleOffsetDeg), CS.vEgo, params.roll)
       roll_compensation = params.roll * ACCELERATION_DUE_TO_GRAVITY
       curvature_deadzone = abs(VM.calc_curvature(math.radians(self.steering_angle_deadzone_deg), CS.vEgo, 0.0))
@@ -78,7 +110,7 @@ class LatControlTorque(LatControl):
       low_speed_factor = (np.interp(CS.vEgo, LOW_SPEED_X, LOW_SPEED_Y) / max(CS.vEgo, MIN_SPEED)) ** 2
       setpoint = lat_delay * desired_lateral_jerk + expected_lateral_accel
       error = setpoint - measurement
-      error_lsf = error + low_speed_factor / self.torque_params.kp * error
+      error_lsf = error + low_speed_factor / current_kp * error
 
       # do error correction in lateral acceleration space, convert at end to handle non-linear torque responses correctly
       pid_log.error = float(error_lsf)
