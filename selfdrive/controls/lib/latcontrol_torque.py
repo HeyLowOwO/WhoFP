@@ -93,7 +93,7 @@ class LatControlTorque(LatControl):
           llk, measurement, model_data, params, pid_log, setpoint, frogpilot_toggles
         )
 
-        freeze_integrator = steer_limited_by_safety or CS.steeringPressed or CS.vEgo < 5
+        freeze_integrator = steer_limited_by_safety or CS.steeringPressed or CS.vEgo < 2
         output_torque = self.pid.update(pid_log.error,
                                         feedforward=ff,
                                         speed=CS.vEgo,
