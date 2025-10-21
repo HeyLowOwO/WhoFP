@@ -25,10 +25,11 @@ from openpilot.frogpilot.controls.lib.neural_network_feedforward import LOW_SPEE
 
 MAX_LAT_JERK_UP = 2.5            # m/s^3
 
-LOW_SPEED_X = [0, 10, 20, 30]
-LOW_SPEED_Y = [15, 13, 10, 5]
+LOW_SPEED_X = [0, 8, 20, 30]
+LOW_SPEED_Y = [15, 8, 6, 3]
+#LOW_SPEED_Y = [15, 13, 10, 5]
 
-AMPLIFICATION_OFFSET = 0.30  # Decouples kP from low-speed amplification
+AMPLIFICATION_OFFSET = 0.0  # Decouples kP from low-speed amplification
 
 
 class LatControlTorque(LatControl):
