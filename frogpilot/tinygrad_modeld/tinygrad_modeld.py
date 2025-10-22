@@ -35,7 +35,7 @@ PROCESS_NAME = "frogpilot.tinygrad_modeld.tinygrad_modeld"
 SEND_RAW_PRED = os.getenv('SEND_RAW_PRED')
 
 
-LAT_SMOOTH_SECONDS = 0.2
+LAT_SMOOTH_SECONDS = 0.1
 LONG_SMOOTH_SECONDS = 0.3
 MIN_LAT_CONTROL_SPEED = 0.3
 
@@ -256,7 +256,7 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
     
         # Apply bias only when active
         if state['left_active']:
-            curvature_bias = -0.014
+            curvature_bias = -0.010
         elif state['right_active']:
             curvature_bias = 0.020
     
@@ -288,7 +288,7 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
 
     # Dynamic lateral smoothing
     if currently_in_turn or blinker_turn or get_action_from_model.post_turn_counter > 0:
-      lat_smooth = 0.08  # Active turns, blinker under threshold, or post-turn recovery
+      lat_smooth = 0.1  # Active turns, blinker under threshold, or post-turn recovery
     else:
       lat_smooth = LAT_SMOOTH_SECONDS  # Use stock value for all other cases
       
