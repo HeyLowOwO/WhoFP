@@ -29,7 +29,7 @@ LOW_SPEED_X = [0, 8, 20, 30]
 LOW_SPEED_Y = [15, 8, 6, 3]
 #LOW_SPEED_Y = [15, 13, 10, 5]
 
-AMPLIFICATION_OFFSET = 0.0  # Decouples kP from low-speed amplification
+AMPLIFICATION_OFFSET = 0.30  # Decouples kP from low-speed amplification
 
 
 class LatControlTorque(LatControl):
