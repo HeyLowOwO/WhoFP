@@ -26,7 +26,7 @@ from openpilot.frogpilot.controls.lib.neural_network_feedforward import LOW_SPEE
 MAX_LAT_JERK_UP = 2.5            # m/s^3
 
 LOW_SPEED_X = [0, 10, 15, 20, 30]
-LOW_SPEED_Y = [15, 12, 8, 6, 3]
+LOW_SPEED_Y = [15, 10, 6, 4, 2]
 #LOW_SPEED_Y = [15, 13, 10, 5]
 
 AMPLIFICATION_OFFSET = 0.30  # Decouples kP from low-speed amplification
@@ -96,7 +96,7 @@ class LatControlTorque(LatControl):
           llk, measurement, model_data, params, pid_log, setpoint, frogpilot_toggles
         )
 
-        freeze_integrator = steer_limited_by_safety or CS.steeringPressed or CS.vEgo < 1
+        freeze_integrator = steer_limited_by_safety or CS.steeringPressed or CS.vEgo < 2
         output_torque = self.pid.update(pid_log.error,
                                         feedforward=ff,
                                         speed=CS.vEgo,
@@ -110,7 +110,7 @@ class LatControlTorque(LatControl):
         # TODO jerk is weighted by lat_delay for legacy reasons, but should be made independent of it
         ff += get_friction(error, lateral_accel_deadzone, FRICTION_THRESHOLD, self.torque_params)
 
-        freeze_integrator = steer_limited_by_safety or CS.steeringPressed or CS.vEgo < 1
+        freeze_integrator = steer_limited_by_safety or CS.steeringPressed or CS.vEgo < 2
         output_lataccel = self.pid.update(pid_log.error,
                                          -measurement_rate,
                                           feedforward=ff,
