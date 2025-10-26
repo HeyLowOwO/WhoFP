@@ -285,6 +285,7 @@ void FrogPilotSettingsWindow::updateVariables() {
     startAccel = CP.getStartAccel();
     steerActuatorDelay = CP.getSteerActuatorDelay();
     steerKp = CP.getLateralTuning().which() == cereal::CarParams::LateralTuning::PID ? CP.getLateralTuning().getPid().getKpV()[0] : 0.6;
+    steerKi = CP.getLateralTuning().which() == cereal::CarParams::LateralTuning::PID ? CP.getLateralTuning().getPid().getKiV()[0] : 0.3;
     steerRatio = CP.getSteerRatio();
     stopAccel = CP.getStopAccel();
     stoppingDecelRate = CP.getStoppingDecelRate();
@@ -296,6 +297,7 @@ void FrogPilotSettingsWindow::updateVariables() {
     float currentDelayStock = params.getFloat("SteerDelayStock");
     float currentFrictionStock = params.getFloat("SteerFrictionStock");
     float currentKPStock = params.getFloat("SteerKPStock");
+    float currentKIStock = params.getFloat("SteerKIStock");
     float currentLatAccelStock = params.getFloat("SteerLatAccelStock");
     float currentLongDelayStock = params.getFloat("LongitudinalActuatorDelayStock");
     float currentStartAccelStock = params.getFloat("StartAccelStock");
@@ -324,6 +326,13 @@ void FrogPilotSettingsWindow::updateVariables() {
         params.putFloat("SteerKP", steerKp);
       }
       params.putFloat("SteerKPStock", steerKp);
+    }
+
+    if (currentKIStock != steerKi && steerKi != 0) {
+      if (params.getFloat("SteerKI") == currentKIStock || currentKIStock == 0) {
+        params.putFloat("SteerKI", steerKi);
+      }
+      params.putFloat("SteerKIStock", steerKi);
     }
 
     if (currentLatAccelStock != latAccelFactor && latAccelFactor != 0) {
