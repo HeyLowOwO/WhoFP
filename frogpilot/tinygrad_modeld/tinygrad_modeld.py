@@ -256,9 +256,9 @@ def get_action_from_model(model_output: dict[str, np.ndarray], prev_action: log.
     
         # Apply bias only when active
         if state['left_active']:
-            curvature_bias = -0.010
+            curvature_bias = -0.020
         elif state['right_active']:
-            curvature_bias = 0.020
+            curvature_bias = 0.030
     
         # Update previous state
         state['left_was_on'] = car_state.leftBlinker
