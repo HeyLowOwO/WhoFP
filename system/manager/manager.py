@@ -21,6 +21,7 @@ from openpilot.system.version import get_build_metadata, terms_version, training
 from openpilot.system.hardware.hw import Paths
 
 from openpilot.frogpilot.common.frogpilot_functions import frogpilot_boot_functions, install_frogpilot, uninstall_frogpilot
+from openpilot.frogpilot.common.frogpilot_variables import get_frogpilot_toggles
 
 
 def manager_init() -> None:
@@ -136,7 +137,7 @@ def manager_thread() -> None:
   pm = messaging.PubMaster(['managerState'])
 
   write_onroad_params(False, params)
-  ensure_running(managed_processes.values(), False, params=params, CP=sm['carParams'], not_run=ignore)
+  ensure_running(managed_processes.values(), False, params=params, CP=sm['carParams'], not_run=ignore, frogpilot_toggles=get_frogpilot_toggles())
 
   started_prev = False
   ignition_prev = False
@@ -145,6 +146,8 @@ def manager_thread() -> None:
   sm = sm.extend(['frogpilotPlan'])
 
   params_memory = Params(memory=True, return_defaults=True)
+
+  frogpilot_toggles = get_frogpilot_toggles()
 
   while True:
     sm.update(1000)
@@ -155,6 +158,8 @@ def manager_thread() -> None:
       params.clear_all(ParamKeyFlag.CLEAR_ON_ONROAD_TRANSITION)
 
       # FrogPilot variables
+      frogpilot_toggles = get_frogpilot_toggles()
+
       params_memory.clear_all(ParamKeyFlag.CLEAR_ON_ONROAD_TRANSITION)
     elif not started and started_prev:
       params.clear_all(ParamKeyFlag.CLEAR_ON_OFFROAD_TRANSITION)
@@ -173,7 +178,7 @@ def manager_thread() -> None:
     started_prev = started
     ignition_prev = ignition
 
-    ensure_running(managed_processes.values(), started, params=params, CP=sm['carParams'], not_run=ignore)
+    ensure_running(managed_processes.values(), started, params=params, CP=sm['carParams'], not_run=ignore, frogpilot_toggles=frogpilot_toggles)
 
     running = ' '.join("{}{}\u001b[0m".format("\u001b[32m" if p.proc.is_alive() else "\u001b[31m", p.name)
                        for p in managed_processes.values() if p.proc)
@@ -205,6 +210,8 @@ def manager_thread() -> None:
       break
 
     # FrogPilot variables
+    if sm['frogpilotPlan'].togglesUpdated:
+      frogpilot_toggles = get_frogpilot_toggles()
 
 
 def main() -> None:
