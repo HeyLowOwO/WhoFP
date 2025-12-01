@@ -114,6 +114,20 @@ def extract_zip(zip_file, extract_path):
   print(f"Extraction completed!")
 
 
+def flash_panda(params_memory):
+  for serial in Panda.list():
+    try:
+      with Panda(serial=serial) as panda:
+        print(f"Flashing Panda {serial}")
+        panda.reset(enter_bootstub=True)
+        panda.flash()
+    except Exception as exception:
+      print(f"Failed to flash Panda {serial}: {exception}")
+      sentry.capture_exception(exception)
+
+  params_memory.remove("FlashPanda")
+
+
 def is_url_pingable(url):
   if not hasattr(is_url_pingable, "session"):
     is_url_pingable.session = requests.Session()
