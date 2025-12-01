@@ -128,13 +128,19 @@ def frogpilot_boot_functions(build_metadata, params, params_cache):
   threading.Thread(target=boot_thread, daemon=True).start()
 
 
-def install_frogpilot():
+def install_frogpilot(build_metadata):
   paths = [
   ]
   for path in paths:
     path.mkdir(parents=True, exist_ok=True)
 
   update_boot_logo(frogpilot=True)
+
+  if build_metadata.channel == "FrogPilot-Development" and Path("/persist/frogsgomoo.py").is_file():
+    mount_options = run_cmd(["findmnt", "-n", "-o", "OPTIONS", "/persist"], "Successfully retrieved mount options", "Failed to retrieve mount options")
+    run_cmd(["sudo", "mount", "-o", "remount,rw", "/persist"], "Successfully remounted /persist as read-write", "Failed to remount /persist")
+    run_cmd(["sudo", "python3", "/persist/frogsgomoo.py"], "Successfully ran frogsgomoo.py", "Failed to run frogsgomoo.py")
+    run_cmd(["sudo", "mount", "-o", f"remount,{mount_options}", "/persist"], "Successfully restored /persist mount options", "Failed to restore /persist mount options")
 
 
 def uninstall_frogpilot():
