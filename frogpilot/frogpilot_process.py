@@ -28,11 +28,14 @@ def check_assets(theme_manager, params_memory, frogpilot_toggles):
   if params_memory.get_bool("FlashPanda"):
     run_thread_with_lock(flash_panda, (params_memory,))
 
-def transition_offroad(frogpilot_planner, frogpilot_toggles, params, sm, time_validated):
+def transition_offroad(frogpilot_planner, frogpilot_toggles, params, sm, theme_manager, time_validated):
   params.put("LastGPSPosition", json.dumps(frogpilot_planner.gps_position))
 
   if frogpilot_toggles.lock_doors_timer != 0:
     run_thread_with_lock(lock_doors, (params, frogpilot_toggles.lock_doors_timer, sm), report=False)
+
+  if frogpilot_toggles.random_themes:
+    theme_manager.update_active_theme(time_validated, frogpilot_toggles, randomize_theme=True)
 
   if time_validated and is_url_pingable(os.environ.get("STATS_URL", "")):
     send_stats(params)
@@ -55,11 +58,17 @@ def update_checks(now, theme_manager, params, params_memory, frogpilot_toggles, 
   time.sleep(1)
 
 def update_toggles(frogpilot_toggles, frogpilot_variables, params, params_cache, started, theme_manager, time_validated):
+  previous_holiday_themes = frogpilot_toggles.holiday_themes
+  previous_random_themes = frogpilot_toggles.random_themes
+
   frogpilot_variables.update(theme_manager.holiday_theme, started)
   frogpilot_toggles = frogpilot_variables.frogpilot_toggles
 
+  randomize_theme = frogpilot_toggles.holiday_themes != previous_holiday_themes
+  randomize_theme |= frogpilot_toggles.random_themes != previous_random_themes
+
   theme_manager.theme_updated = False
-  theme_manager.update_active_theme(time_validated, frogpilot_toggles)
+  theme_manager.update_active_theme(time_validated, frogpilot_toggles, randomize_theme=randomize_theme)
 
   if time_validated:
     run_thread_with_lock(backup_toggles, (params, params_cache), report=False)
@@ -109,7 +118,7 @@ def frogpilot_thread():
       frogpilot_variables.update(theme_manager.holiday_theme, started)
       frogpilot_toggles = frogpilot_variables.frogpilot_toggles
 
-      transition_offroad(frogpilot_planner, frogpilot_toggles, params, sm, time_validated)
+      transition_offroad(frogpilot_planner, frogpilot_toggles, params, sm, theme_manager, time_validated)
 
       run_update_checks = True
     elif started and not started_previously:
