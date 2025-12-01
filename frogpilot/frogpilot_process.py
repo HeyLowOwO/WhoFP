@@ -9,6 +9,7 @@ from openpilot.common.params import Params
 from openpilot.common.realtime import DT_MDL, Priority, Ratekeeper, config_realtime_process
 from openpilot.common.time_helpers import system_time_valid
 
+from openpilot.frogpilot.assets.theme_manager import THEME_COMPONENT_PARAMS, ThemeManager
 from openpilot.frogpilot.common.frogpilot_functions import backup_toggles
 from openpilot.frogpilot.common.frogpilot_utilities import is_url_pingable, run_thread_with_lock, update_openpilot
 from openpilot.frogpilot.common.frogpilot_variables import FrogPilotVariables
@@ -18,7 +19,11 @@ from openpilot.frogpilot.system.frogpilot_tracking import FrogPilotTracking
 
 ASSET_CHECK_RATE = (1 / DT_MDL)
 
-def check_assets(params_memory, frogpilot_toggles):
+def check_assets(theme_manager, params_memory, frogpilot_toggles):
+  for asset_type, asset_param in THEME_COMPONENT_PARAMS.items():
+    asset_to_download = params_memory.get(asset_param)
+    if asset_to_download:
+      run_thread_with_lock(theme_manager.download_theme, (asset_type, asset_to_download, asset_param, frogpilot_toggles))
 
 def transition_offroad(frogpilot_planner, frogpilot_toggles, params, sm, time_validated):
   params.put("LastGPSPosition", json.dumps(frogpilot_planner.gps_position))
@@ -28,18 +33,22 @@ def transition_offroad(frogpilot_planner, frogpilot_toggles, params, sm, time_va
 
 def transition_onroad():
 
-def update_checks(now, params, params_memory, frogpilot_toggles, boot_run=False):
+def update_checks(now, theme_manager, params, params_memory, frogpilot_toggles, boot_run=False):
   while not (is_url_pingable("https://github.com") or is_url_pingable("https://gitlab.com")):
     time.sleep(60)
+
+  theme_manager.update_themes(frogpilot_toggles, boot_run)
 
   if frogpilot_toggles.automatic_updates:
     run_thread_with_lock(update_openpilot, (params, params_memory))
 
   time.sleep(1)
 
-def update_toggles(frogpilot_toggles, frogpilot_variables, params, params_cache, started, time_validated):
+def update_toggles(frogpilot_toggles, frogpilot_variables, params, params_cache, started, theme_manager, time_validated):
   frogpilot_variables.update(started)
   frogpilot_toggles = frogpilot_variables.frogpilot_toggles
+
+  theme_manager.update_active_theme(frogpilot_toggles)
 
   if time_validated:
     run_thread_with_lock(backup_toggles, (params, params_cache), report=False)
@@ -63,6 +72,7 @@ def frogpilot_thread():
   params_memory = Params(memory=True, return_defaults=True)
 
   frogpilot_variables = FrogPilotVariables()
+  theme_manager = ThemeManager(params, params_memory)
 
   run_update_checks = False
   started_previously = False
@@ -95,21 +105,22 @@ def frogpilot_thread():
 
     if started and sm.updated["modelV2"]:
       frogpilot_planner.update(now, time_validated, sm, frogpilot_toggles)
-      frogpilot_planner.publish(toggles_updated, sm, pm, frogpilot_toggles)
+      frogpilot_planner.publish(theme_manager.theme_updated, toggles_updated, sm, pm, frogpilot_toggles)
 
       frogpilot_tracking.update(now, time_validated, sm, frogpilot_toggles)
     elif not started:
       frogpilot_plan_send = messaging.new_message("frogpilotPlan")
+      frogpilot_plan_send.frogpilotPlan.themeUpdated = theme_manager.theme_updated or params_memory.get_bool("UseActiveTheme")
       frogpilot_plan_send.frogpilotPlan.togglesUpdated = toggles_updated
       pm.send("frogpilotPlan", frogpilot_plan_send)
 
     started_previously = started
 
     if rate_keeper.frame % ASSET_CHECK_RATE == 0:
-      check_assets(params_memory, frogpilot_toggles)
+      check_assets(theme_manager, params_memory, frogpilot_toggles)
 
     if params_memory.get_bool("FrogPilotTogglesUpdated"):
-      frogpilot_toggles = update_toggles(frogpilot_toggles, frogpilot_variables, params, params_cache, started, time_validated)
+      frogpilot_toggles = update_toggles(frogpilot_toggles, frogpilot_variables, params, params_cache, started, theme_manager, time_validated)
 
       toggles_last_updated = now
 
@@ -120,7 +131,7 @@ def frogpilot_thread():
     run_update_checks &= time_validated
 
     if run_update_checks:
-      run_thread_with_lock(update_checks, (now, params, params_memory, frogpilot_toggles))
+      run_thread_with_lock(update_checks, (now, theme_manager, params, params_memory, frogpilot_toggles))
 
       run_update_checks = False
     elif not time_validated:
@@ -128,7 +139,7 @@ def frogpilot_thread():
       if not time_validated:
         continue
 
-      run_thread_with_lock(update_checks, (now, params, params_memory, frogpilot_toggles, True))
+      run_thread_with_lock(update_checks, (now, theme_manager, params, params_memory, frogpilot_toggles, True))
 
     rate_keeper.keep_time()
 
