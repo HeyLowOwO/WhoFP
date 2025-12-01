@@ -222,7 +222,10 @@ class CarController(CarControllerBase):
         self.aego.update(a_ego_blended)
         j_ego = (self.aego.x - prev_aego) / (DT_CTRL * 3)
 
-        future_t = float(np.interp(CS.out.vEgo, [2., 5.], [0.25, 0.5]))
+        if frogpilot_toggles.frogsgomoo_tweak:
+          future_t = float(np.interp(CS.out.vEgo, [2., 5.], [0.35, 1.0]))
+        else:
+          future_t = float(np.interp(CS.out.vEgo, [2., 5.], [0.25, 0.5]))
         a_ego_future = a_ego_blended + j_ego * future_t
 
         if CC.longActive:
@@ -231,7 +234,7 @@ class CarController(CarControllerBase):
 
           error_future = pcm_accel_cmd - a_ego_future
 
-          if not stopping:
+          if not stopping and not frogpilot_toggles.frogsgomoo_tweak:
             # Toyota's PCM slowly responds to changes in pitch. On change, we amplify our
             # acceleration request to compensate for the undershoot and following overshoot
             pitch_compensation = float(np.clip(math.sin(self.pitch_hp.x) * ACCELERATION_DUE_TO_GRAVITY,
