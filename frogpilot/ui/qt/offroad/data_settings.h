@@ -18,4 +18,5 @@ private:
   FrogPilotSettingsWindow *parent;
 
   Params params;
+  Params params_cache{"", true};
 };

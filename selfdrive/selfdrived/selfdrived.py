@@ -147,6 +147,7 @@ class SelfdriveD:
       self.events.add(EventName.dashcamMode, static=True)
 
     # FrogPilot variables
+    self.params_memory = Params(memory=True, return_defaults=True)
 
   def update_events(self, CS):
     """Compute onroadEvents from carState"""
