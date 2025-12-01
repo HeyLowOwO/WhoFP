@@ -142,6 +142,8 @@ def manager_thread() -> None:
   ignition_prev = False
 
   # FrogPilot variables
+  sm = sm.extend(['frogpilotPlan'])
+
   params_memory = Params(memory=True, return_defaults=True)
 
   while True:
