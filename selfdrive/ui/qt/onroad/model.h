@@ -47,6 +47,8 @@ private:
   QRectF clip_region;
 
   // FrogPilot variables
+  void mapAveragedLineToPolygon(const cereal::XYZTData::Reader &line1, const cereal::XYZTData::Reader &line2, float y_off, float z_off,
+                                QPolygonF *pvd, int max_idx, bool allow_invert = true);
   void updateAdjacentLeads(const cereal::FrogPilotRadarState::Reader &radar_state, const cereal::XYZTData::Reader &line);
   void updateRadarTracks(const cereal::XYZTData::Reader &line);
 
