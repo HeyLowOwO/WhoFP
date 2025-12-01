@@ -2,8 +2,12 @@
 import threading
 import time
 
+from pathlib import Path
+
 from openpilot.common.time_helpers import system_time_valid
 from openpilot.system.hardware import HARDWARE
+
+from openpilot.frogpilot.common.frogpilot_utilities import run_cmd
 
 
 def frogpilot_boot_functions():
@@ -21,6 +25,22 @@ def install_frogpilot():
   for path in paths:
     path.mkdir(parents=True, exist_ok=True)
 
+  frogpilot_boot_logo = Path(__file__).resolve().parents[1] / "assets/other_images/frogpilot_boot_logo.jpg"
+  update_boot_logo(frogpilot_boot_logo)
+
 
 def uninstall_frogpilot():
+  stock_boot_logo = Path(__file__).resolve().parents[1] / "assets/other_images/stock_bg.jpg"
+  update_boot_logo(stock_boot_logo)
+
   HARDWARE.uninstall()
+
+
+def update_boot_logo(target_logo):
+  boot_logo_location = Path("/usr/comma/bg.jpg")
+
+  if target_logo.read_bytes() != boot_logo_location.read_bytes():
+    mount_options = run_cmd(["findmnt", "-n", "-o", "OPTIONS", "/"], "Successfully retrieved mount options", "Failed to retrieve mount options")
+    run_cmd(["sudo", "mount", "-o", "remount,rw", "/"], "Successfully remounted / as read-write", "Failed to remount /")
+    run_cmd(["sudo", "cp", target_logo, boot_logo_location], "Successfully replaced boot logo", "Failed to replace boot logo")
+    run_cmd(["sudo", "mount", "-o", f"remount,{mount_options}", "/"], "Successfully restored / mount options", "Failed to restore / mount options")
