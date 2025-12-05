@@ -254,9 +254,8 @@ class CarState(CarStateBase):
     ret.leftBlinker, ret.rightBlinker = self.update_blinker_from_lamp(50, cp.vl["BLINKERS"][left_blinker_sig],
                                                                       cp.vl["BLINKERS"][right_blinker_sig])
     if self.CP.enableBsm:
-      cp_bsm = can_parsers[Bus.alt]
-      ret.leftBlindspot = cp_bsm.vl["BLINDSPOTS_REAR_CORNERS"]["FL_INDICATOR"] != 0
-      ret.rightBlindspot = cp_bsm.vl["BLINDSPOTS_REAR_CORNERS"]["FR_INDICATOR"] != 0
+      ret.leftBlindspot = cp.vl["BLINDSPOTS_REAR_CORNERS"]["FL_INDICATOR"] != 0
+      ret.rightBlindspot = cp.vl["BLINDSPOTS_REAR_CORNERS"]["FR_INDICATOR"] != 0
 
     # cruise state
     # CAN FD cars enable on main button press, set available if no TCS faults preventing engagement
@@ -312,23 +311,16 @@ class CarState(CarStateBase):
         ("CRUISE_BUTTONS", 1)
       ]
 
-    # Blind spot detection is on ACAN for most cars
-    bsm_msgs = []
+    # Blind spot detection
     if CP.enableBsm:
-      bsm_msgs += [
+      msgs += [
         ("BLINDSPOTS_REAR_CORNERS", 20),
       ]
 
-    parsers = {
-      Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], msgs, CanBus(CP).ECAN),
+    return {
+      Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], msgs, CanBus(CP).ACAN),
       Bus.cam: CANParser(DBC[CP.carFingerprint][Bus.pt], [], CanBus(CP).CAM),
     }
-
-    # Add separate parser for blind spot on ACAN if enabled
-    if CP.enableBsm:
-      parsers[Bus.alt] = CANParser(DBC[CP.carFingerprint][Bus.pt], bsm_msgs, CanBus(CP).ACAN)
-
-    return parsers
 
   def get_can_parsers(self, CP):
     if CP.flags & HyundaiFlags.CANFD:
