@@ -310,12 +310,16 @@ class CarState(CarStateBase):
         # this message is 50Hz but the ECU frequently stops transmitting for ~0.5s
         ("CRUISE_BUTTONS", 1)
       ]
+
+    # Blind spot detection is on ACAN for most cars
+    bsm_msgs = []
     if CP.enableBsm:
-      msgs += [
+      bsm_msgs += [
         ("BLINDSPOTS_REAR_CORNERS", 20),
       ]
+
     return {
-      Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], msgs, CanBus(CP).ECAN),
+      Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], msgs + bsm_msgs, CanBus(CP).ACAN),
       Bus.cam: CANParser(DBC[CP.carFingerprint][Bus.pt], [], CanBus(CP).CAM),
     }
 
