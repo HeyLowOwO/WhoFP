@@ -465,6 +465,12 @@ int set_safety_hooks(uint16_t mode, uint16_t param) {
   relay_malfunction_reset();
   safety_rx_checks_invalid = false;
 
+  // reset FrogPilot variables
+  aol_allowed = false;
+  lkas_on = false;
+  lkas_button_prev = false;
+  main_button_prev = false;
+
   current_safety_config.rx_checks = NULL;
   current_safety_config.rx_checks_len = 0;
   current_safety_config.tx_msgs = NULL;
