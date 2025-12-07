@@ -316,12 +316,6 @@ class CarState(CarStateBase):
         ("CRUISE_BUTTONS", 1)
       ]
 
-    # Blind spot detection
-    if CP.enableBsm:
-      msgs += [
-        ("BLINDSPOTS_REAR_CORNERS", 20),
-      ]
-
     return {
       Bus.pt: CANParser(DBC[CP.carFingerprint][Bus.pt], msgs, CanBus(CP).ECAN),
       Bus.cam: CANParser(DBC[CP.carFingerprint][Bus.pt], [], CanBus(CP).CAM),
